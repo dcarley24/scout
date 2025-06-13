@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Centriq Scout – New Prospect</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body class="bg-gray-100 text-gray-900 min-h-screen">
+    <div class="bg-gray-800 text-white p-5 shadow">
+        <h1 class="text-2xl font-semibold">Centriq Scout</h1>
+        <p class="text-sm underline cursor-pointer mt-1" onclick="toggleInfo()">What's this?</p>
+        <div id="infoBox" class="text-xs bg-gray-700 p-3 rounded mt-2 hidden">
+        Centriq Scout is a lightweight AI-powered web tool designed to help sales teams quickly generate personalized prospect snapshots and discovery insights. Built with Flask and OpenAI's GPT-4o, it surfaces likely needs and conversation starters from just a few fields of input. The tool stores all outputs in a local database and can optionally sync insights to HubSpot company records. It’s mobile-friendly, fast to use, and built for sales reps, not just tech users.
+        </div>
+    </div>
+
+    <div class="max-w-screen-sm mx-auto px-4 mt-6">
+        <form method="POST" class="space-y-4 bg-white p-4 rounded shadow">
+            <div>
+                <label class="block text-sm font-medium">Prospect Name</label>
+                <input name="name" class="w-full border rounded p-2" required>
+            </div>
+            <div>
+                <label class="block text-sm font-medium">Industry</label>
+                <input name="industry" class="w-full border rounded p-2" required>
+            </div>
+            <div>
+                <label class="block text-sm font-medium">Company Size</label>
+                <input name="size" class="w-full border rounded p-2" required>
+            </div>
+            <div>
+                <label class="block text-sm font-medium">Region</label>
+                <input name="region" class="w-full border rounded p-2" required>
+            </div>
+            <button type="submit" class="w-full bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                Generate Snapshot
+            </button>
+        </form>
+
+        <div class="mt-8 text-center text-sm">
+            <a href="{{ url_for('index') }}" class="text-blue-700 underline px-2">New</a> |
+            <a href="{{ url_for('history') }}" class="text-blue-700 underline px-2">History</a>
+        </div>
+    </div>
+
+    <script>
+    function toggleInfo() {
+        const box = document.getElementById("infoBox");
+        box.classList.toggle("hidden");
+    }
+
+    document.querySelector('input[name="name"]').addEventListener('blur', async () => {
+        const name = document.querySelector('input[name="name"]').value.trim();
+        if (!name) return;
+
+        try {
+            const res = await fetch('/autofill', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name })
+            });
+            const data = await res.json();
+            if (data.industry) document.querySelector('input[name="industry"]').value = data.industry;
+            if (data.size) document.querySelector('input[name="size"]').value = data.size;
+            if (data.region) document.querySelector('input[name="region"]').value = data.region;
+        } catch (err) {
+            console.error('Autofill error:', err);
+        }
+    });
+    </script>
+</body>
+</html>

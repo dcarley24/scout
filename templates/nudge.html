@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Centriq Scout – Nudge</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body class="bg-gray-100 text-gray-900 p-4">
+    <div class="max-w-screen-sm mx-auto">
+        <h1 class="text-2xl font-bold mb-4 text-center">Add a Nudge</h1>
+
+        <div class="bg-white p-4 rounded shadow space-y-2 mb-6">
+            <p><strong>Prospect:</strong> {{ snapshot.name }}</p>
+            <p><strong>Industry:</strong> {{ snapshot.industry }}</p>
+            <p><strong>Size:</strong> {{ snapshot.size }}</p>
+            <p><strong>Region:</strong> {{ snapshot.region }}</p>
+            <p><strong>Needs:</strong> {{ snapshot.tags }}</p>
+        </div>
+
+        <form method="POST" class="bg-white p-4 rounded shadow space-y-4">
+            <div>
+                <label class="block text-sm font-medium">New Nudge or Context</label>
+                <input name="nudge" class="w-full border rounded p-2" required>
+            </div>
+            <button type="submit" class="w-full bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                Generate Updated Discovery
+            </button>
+        </form>
+
+        <div class="mt-8 text-center text-sm">
+            <a href="{{ url_for('index') }}" class="text-blue-700 underline px-2">New</a> |
+            <a href="{{ url_for('history') }}" class="text-blue-700 underline px-2">History</a>
+        </div>
+    </div>
+</body>
+</html>

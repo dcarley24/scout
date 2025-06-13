@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Snapshot History</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body class="bg-gray-100 text-gray-900 p-4">
+    <div class="max-w-screen-sm mx-auto bg-white p-4 rounded shadow">
+        <h1 class="text-xl font-bold mb-4">Snapshot History</h1>
+
+        <div class="space-y-3">
+            {% for record in records %}
+            <div class="flex justify-between items-center border-b pb-2 text-sm {% if record['pushed_to_hubspot'] %}bg-gray-50{% endif %}">
+                <div class="flex flex-col max-w-[250px] truncate">
+                    <a href="{{ url_for('result', snapshot_id=record['id']) }}"
+                       class="text-blue-700 underline font-medium truncate">
+                        {{ record['name'].title() }}
+                    </a>
+                    <span class="text-gray-500 text-xs mt-1 timestamp" data-utc="{{ record['created_at'] }}">
+                        Loading...
+                    </span>
+                </div>
+                {% if not record['pushed_to_hubspot'] %}
+                <button onclick="pushToHubspot({{ record['id'] }})"
+                        class="bg-green-600 text-white px-3 py-1 text-xs rounded ml-4 whitespace-nowrap">
+                    Push
+                </button>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="text-center mt-6 text-sm">
+        <a href="{{ url_for('index') }}" class="text-blue-700 underline">Home</a>
+    </div>
+
+    <script>
+        function pushToHubspot(id) {
+            fetch(`/push/${id}`, { method: 'POST' })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        alert("Pushed to HubSpot!");
+                        location.reload();
+                    } else {
+                        alert("Error: " + (data.error || "Unknown error"));
+                    }
+                });
+        }
+
+        // CDT timestamp formatter
+        document.addEventListener('DOMContentLoaded', () => {
+            const today = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Chicago' });
+
+            document.querySelectorAll('.timestamp').forEach(span => {
+                const utcString = span.dataset.utc + 'Z'; // Z = UTC
+                const date = new Date(utcString);
+
+                const localDate = new Intl.DateTimeFormat('en-CA', {
+                    timeZone: 'America/Chicago'
+                }).format(date);
+
+                const options = {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: false,
+                    timeZone: 'America/Chicago'
+                };
+
+                span.textContent = (localDate === today)
+                    ? date.toLocaleTimeString('en-US', options)
+                    : localDate;
+            });
+        });
+    </script>
+</body>
+</html>

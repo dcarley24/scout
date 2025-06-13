@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Snapshot Result</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body class="bg-gray-100 text-gray-900 p-4">
+    <div class="max-w-screen-sm mx-auto bg-white p-6 rounded shadow">
+        <h1 class="text-xl font-bold mb-4">Snapshot Result</h1>
+
+        <div class="space-y-1 text-sm mb-4">
+            <p><strong>Name:</strong> {{ snapshot['name'].title() }}</p>
+            <p><strong>Industry:</strong> {{ snapshot['industry'] }}</p>
+            <p><strong>Size:</strong> {{ snapshot['size'] }}</p>
+            <p><strong>Region:</strong> {{ snapshot['region'] }}</p>
+            <p><strong>Tags:</strong> {{ snapshot['tags'] }}</p>
+            <p><strong>Nudge:</strong> {{ snapshot['nudge'] if snapshot['nudge'] else 'None' }}</p>
+        </div>
+
+        <div class="mb-6">
+            <h2 class="text-lg font-semibold mb-2">Summary</h2>
+            <pre class="bg-gray-100 p-3 rounded text-sm whitespace-pre-wrap">{{ snapshot['summary'] }}</pre>
+        </div>
+
+        <div class="mb-6">
+            <h2 class="text-lg font-semibold mb-2">Discovery Output</h2>
+            <pre class="bg-gray-100 p-3 rounded text-sm whitespace-pre-wrap">{{ snapshot['discovery'] }}</pre>
+        </div>
+
+        <div class="flex flex-wrap gap-3">
+            <a href="{{ url_for('nudge', snapshot_id=snapshot['id']) }}"
+               class="bg-blue-600 text-white px-4 py-2 rounded text-sm">Nudge</a>
+            {% if not snapshot['pushed_to_hubspot'] %}
+            <form action="{{ url_for('push', snapshot_id=snapshot['id']) }}" method="post">
+                <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded text-sm">
+                    Push to HubSpot
+                </button>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="text-center mt-6 text-sm">
+        <a href="{{ url_for('index') }}" class="text-blue-700 underline px-2">New</a> |
+        <a href="{{ url_for('history') }}" class="text-blue-700 underline px-2">History</a>
+    </div>
+</body>
+</html>
